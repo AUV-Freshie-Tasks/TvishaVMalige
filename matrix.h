@@ -50,6 +50,13 @@ class Matrix {
 		const vector<vector<T>>& data() const {return mat;}
 
 		Matrix<T> inverseOfMatrix() const;
+		
+		T& operator()(int r, int c) {
+        return mat[r][c];
+    }
+    const T& operator()(int r, int c) const {
+        return mat[r][c];
+    }
 
 		static Matrix<double> identity(int n) {
         Matrix<double> I;
