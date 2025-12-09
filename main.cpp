@@ -3,6 +3,7 @@
 #include "matrix.h"
 #include "matrixOps.h"
 #include "LinearRegression.h"
+#include "eqnSolver.h"
 
 int main() {
 
@@ -30,6 +31,49 @@ int main() {
 	Matrix<double> m6(data2);
 	Matrix<double> m7 = m6.inverseOfMatrix();
 	m7.displayVector();
+
+	//2*2
+	vector<vector<double>> dataA = {
+        {4, 3},
+        {6, 3}
+    };
+    Matrix<double> A(dataA);
+    vector<double> b = {10, 12};
+
+    cout << "Matrix A:" << endl;
+    A.displayVector();
+
+    vector<double> x1 = solveSystem(A, b);
+
+    cout << "Solution x1: [ ";
+    for(double val : x1) cout << val << " ";
+    cout << "]" << endl;
+
+    //testing if cache works
+    vector<double> x2 = solveSystem(A, b);
+
+    cout << "Solution x2: [ ";
+    for(double val : x2) cout << val << " ";
+    cout << "]" << endl;
+
+    //cache miss
+    vector<vector<double>> dataB = {
+        {1, 2},
+        {3, 4}
+    };
+    Matrix<double> B(dataB);
+    vector<double> b2 = {5, 11};
+
+    cout << "Matrix B:" << endl;
+    B.displayVector();
+
+    // Solve (This should trigger "Computing LU..." again)
+    vector<double> x3 = solveSystem(B, b2);
+
+    cout << "Solution x3: [ ";
+    for(double val : x3) cout << val << " ";
+    cout << "]" << endl;
+
 
 
 	int m = 2;
