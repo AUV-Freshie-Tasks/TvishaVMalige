@@ -49,9 +49,9 @@ class Matrix {
 
 		const vector<vector<T>>& data() const {return mat;}
 
-		Matrix<T> inverseOfMatrix() const;
 		
-		T& operator()(int r, int c) {
+		
+		/*T& operator()(int r, int c) {
         return mat[r][c];
     }
     const T& operator()(int r, int c) const {
@@ -65,10 +65,87 @@ class Matrix {
 	}
         return I;
     }
+    */
+
+	Matrix inverseOfMatrix() {
+    if (rows != columns) {
+        cout << "Inverse of matrix can't be calculated";
+        return Matrix(mat);
+    }
+
+    int n = rows;
+
+   
+    vector<vector<double>> aug(n, vector<double>(2 * n));
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            aug[i][j] = mat[i][j];   
+        }
+        for (int j = n; j < 2 * n; j++) {
+                if(i == (j - n)) {
+                        aug[i][j] = 1;
+                }
+                else {
+                        aug[i][j] = 0;
+                }
+        }
+    }
+
+
+    for (int i = 0; i < n; i++) {
+
+
+        if (aug[i][i] == 0) {
+                float temp;
+
+            for (int r = i + 1; r < n; r++) {
+                if (aug[r][i] != 0) {
+                    temp = aug[i][i];
+                    aug[i][i] = aug[r][i];
+                    aug[r][i] = temp;
+                    break;
+                }
+            }
+        }
+ if (aug[i][i] == 0) {
+            cout << "Singular Matrix"<< endl;
+            return Matrix(mat);
+        }
+
+
+        double pivot = aug[i][i];
+        for (int j = 0; j < 2 * n; j++) {
+            aug[i][j] /= pivot;
+        }
+
+
+        for (int r = 0; r < n; r++) {
+            if (r != i) {
+                double factor = aug[r][i];
+                for (int j = 0; j < 2 * n; j++) {
+                    aug[r][j] -= factor * aug[i][j];
+                }
+            }
+        }
+    }
+
+
+    vector<vector<double>> inv(n, vector<double>(n));
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            inv[i][j] = aug[i][j + n];
+        }
+    }
+
+    return Matrix(inv);
+}
+
 
 
 };
 
-#include "matrixInversion.h"
+
 
 #endif
