@@ -2,13 +2,16 @@
 #include <vector>
 #include "matrix.h"
 #include "matrixOps.h"
-//#include "LinearRegression.h"
+//#include <pybind11/pybind11.h>
+#include "LinearRegression.h"
 //#include "eqnSolver.h"
+
+//namespace py = pybind11;
 
 int main() {
 
 	vector<vector<double>> data = {{2,0,0}, {0,2,0}, {0,0,2}};
-
+	vector<double> b = {1,6,4};
 	Matrix<double>  m1(data);
 	
 	cout << "m1: " << endl;
@@ -33,55 +36,98 @@ int main() {
 	Matrix<double> m5 = m1.inverseOfMatrix();
 	m5.displayVector();
 
-	/*//2*2
+	Matrix Inv =  m1.EqnSolver(b);
+        Inv.displayVector();
+
+//2*2
 	vector<vector<double>> dataA = {
         {4, 3},
         {6, 3}
     };
-    Matrix<double> A(dataA);
-    vector<double> b = {10, 12};
+    Matrix<double> X(dataA);
+    vector<double> Y = {10, 12};
 
-    cout << "Matrix A:" << endl;
-    A.displayVector();
+    cout << "Matrix X:" << endl;
+    X.displayVector();
 
-    vector<double> x1 = solveSystem(A, b);
+    Matrix<double> x1 = X.EqnSolver(Y);
+vector<double> X1;
+for (int i = 0; i < x1.Rows(); i++) {
+    // Assuming the result is a column vector (n x 1), take column 0
+    X1.push_back(x1(i, 0));
+}
 
     cout << "Solution x1: [ ";
-    for(double val : x1) cout << val << " ";
+    for(double val : X1) cout << val << " ";
     cout << "]" << endl;
 
     //testing if cache works
-    vector<double> x2 = solveSystem(A, b);
+    Matrix<double> x2 = X.EqnSolver(Y);
+
+vector<double> X2;
+for (int i = 0; i < x2.Rows(); i++) {
+    // Assuming the result is a column vector (n x 1), take column 0
+    X2.push_back(x2(i, 0));
+}
 
     cout << "Solution x2: [ ";
-    for(double val : x2) cout << val << " ";
+    for(double val : X2) cout << val << " ";
     cout << "]" << endl;
 
-    //cache miss
+   //cache miss
     vector<vector<double>> dataB = {
         {1, 2},
         {3, 4}
     };
     Matrix<double> B(dataB);
-    vector<double> b2 = {5, 11};
+    /*Matrix<double> b2({{5}, {11}});
+vector<double> B2;
+for (int i = 0; i < b2.Rows(); i++) {
+    // Assuming the result is a column vector (n x 1), take column 0
+    B2.push_back(b2(i, 0));
+}
+
+for(double val : B2) cout << val << " ";
+    cout << "]" << endl;
+*/
+    // Explicitly create the vector type first
+Matrix<double> b2(vector<vector<double>>{{5}, {11}});
+
+vector<double> B2;
+for (int i = 0; i < b2.Rows(); i++) {
+    // b2(i, 0) gets the value at row i, column 0
+    B2.push_back(b2(i, 0));
+}
+
+cout << "Result: [ ";
+for(double val : B2) cout << val << " ";
+cout << "]" << endl;
 
     cout << "Matrix B:" << endl;
     B.displayVector();
 
-    // Solve (This should trigger "Computing LU..." again)
-    vector<double> x3 = solveSystem(B, b2);
+   // Solve (This should trigger "Computing LU..." again)
+    Matrix<double> x3 = B.EqnSolver(B2);
+
+    vector<double> X3;
+for (int i = 0; i < x3.Rows(); i++) {
+    // Assuming the result is a column vector (n x 1), take column 0
+    X3.push_back(x3(i, 0));
+}
+
 
     cout << "Solution x3: [ ";
-    for(double val : x3) cout << val << " ";
+    for(double val : X3) cout << val << " ";
     cout << "]" << endl;
 
 
 
-	int m = 2;
-int n = 2;
+
+	int m = 3;
+int n = 3;
 
 vector<vector<double>> P(m, vector<double>(n));
-    vector<double> Y(m);
+    vector<double> Q(m);
 
     cout << "Enter P matrix (m x n):\n";
     for(int i = 0; i < m; i++)
@@ -90,10 +136,10 @@ vector<vector<double>> P(m, vector<double>(n));
 
     cout << "Enter Y vector (m values):\n";
     for(int i = 0; i < m; i++)
-        cin >> Y[i];
+        cin >> Q[i];
 
     LinearRegression lr(0.01, 5000);
-    lr.fit(P, Y);
+    lr.fit(P, Q);
 
     vector<double> weights = lr.getWeights();
 
@@ -101,8 +147,6 @@ vector<vector<double>> P(m, vector<double>(n));
     for(double w : weights)
         cout << w << " ";
     cout << endl;
-*/
-
         return 0;
 
 }
