@@ -1,4 +1,6 @@
 # TvishaVMalige
 
-
- Applied template for matrix creation, operator overloading, lu decomposition, linear equation solver, linear regression, inversion part of matrix.h
+matrix.h: contains initialisation of matrix, inversion, linear equation solver with lru
+LinearRegression.h: declarations for linear regression
+LinearRegression.cpp: definitions
+matrixOps.h: operator overloading for matrices
