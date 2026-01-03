@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include "matrix.h"
+#include "lrucache.h"
 
 template <typename T>
 Matrix<T> operator+(const Matrix<T>& A, const Matrix<T>& B) {
@@ -49,5 +50,36 @@ Matrix<T> operator*(const Matrix<T>& A, const Matrix<T>& B) {
     return Matrix<T>(result);
 }
 
+
+template <typename T>
+Matrix<double> Matrix<T>::EqnSolver(const vector<double>& b) {
+
+    LUResult lu = computeLU(*this);
+    Matrix<double>& L = lu.lmat;
+    Matrix<double>& U = lu.umat;
+
+    int n = Rows();
+    vector<double> y(n), x(n);
+
+    for (int i = 0; i < n; i++) {
+        y[i] = b[i];
+        for (int j = 0; j < i; j++)
+            y[i] -= L(i,j) * y[j];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        x[i] = y[i];
+        for (int j = i + 1; j < n; j++)
+            x[i] -= U(i,j) * x[j];
+        x[i] /= U(i,i);
+    }
+
+    vector<vector<double>> res(n, vector<double>(1));
+    for (int i = 0; i < n; i++)
+        res[i][0] = x[i];
+
+    return Matrix<double>(res);
+}
 #endif
+
 

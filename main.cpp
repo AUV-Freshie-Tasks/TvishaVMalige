@@ -1,13 +1,15 @@
 #include <iostream>
 #include <vector>
 #include "matrix.h"
+
+#include "lrucache.h"
 #include "matrixOps.h"
 //#include <pybind11/pybind11.h>
 #include "LinearRegression.h"
 //#include "eqnSolver.h"
 
 //namespace py = pybind11;
-
+static LRUMatrixCache luCache(3);   
 int main() {
 
 	vector<vector<double>> data = {{2,0,0}, {0,2,0}, {0,0,2}};
@@ -32,99 +34,56 @@ int main() {
 
 	cout << "m1 * m2: " << endl;
 	m4.displayVector();
-
+	
+	cout << "Inverse: " << endl;
 	Matrix<double> m5 = m1.inverseOfMatrix();
 	m5.displayVector();
 
-	Matrix Inv =  m1.EqnSolver(b);
+	
+	Matrix<double> Inv =  m1.EqnSolver(b);
         Inv.displayVector();
 
-//2*2
-	vector<vector<double>> dataA = {
-        {4, 3},
-        {6, 3}
-    };
-    Matrix<double> X(dataA);
-    vector<double> Y = {10, 12};
+cout << "\n===== LRU CACHE TEST =====\n";
 
-    cout << "Matrix X:" << endl;
-    X.displayVector();
+vector<vector<double>> Adata = {
+    {4, 3},
+    {6, 3}
+};
 
-    Matrix<double> x1 = X.EqnSolver(Y);
-vector<double> X1;
-for (int i = 0; i < x1.Rows(); i++) {
-    // Assuming the result is a column vector (n x 1), take column 0
-    X1.push_back(x1(i, 0));
-}
+Matrix<double> A(Adata);
 
-    cout << "Solution x1: [ ";
-    for(double val : X1) cout << val << " ";
-    cout << "]" << endl;
+vector<double> b1 = {10, 12};
+vector<double> b2 = {20, 24};
 
-    //testing if cache works
-    Matrix<double> x2 = X.EqnSolver(Y);
+Matrix<double> xA1 = A.EqnSolver(b1); // MISS
+Matrix<double> xA2 = A.EqnSolver(b2); // HIT
 
-vector<double> X2;
-for (int i = 0; i < x2.Rows(); i++) {
-    // Assuming the result is a column vector (n x 1), take column 0
-    X2.push_back(x2(i, 0));
-}
+vector<vector<double>> Bdata = {
+    {1, 2},
+    {3, 4}
+};
 
-    cout << "Solution x2: [ ";
-    for(double val : X2) cout << val << " ";
-    cout << "]" << endl;
+Matrix<double> B(Bdata);
+vector<double> bB = {5, 11};
 
-   //cache miss
-    vector<vector<double>> dataB = {
-        {1, 2},
-        {3, 4}
-    };
-    Matrix<double> B(dataB);
-    /*Matrix<double> b2({{5}, {11}});
-vector<double> B2;
-for (int i = 0; i < b2.Rows(); i++) {
-    // Assuming the result is a column vector (n x 1), take column 0
-    B2.push_back(b2(i, 0));
-}
+Matrix<double> xB = B.EqnSolver(bB);  // MISS
 
-for(double val : B2) cout << val << " ";
-    cout << "]" << endl;
-*/
-    // Explicitly create the vector type first
-Matrix<double> b2(vector<vector<double>>{{5}, {11}});
-
-vector<double> B2;
-for (int i = 0; i < b2.Rows(); i++) {
-    // b2(i, 0) gets the value at row i, column 0
-    B2.push_back(b2(i, 0));
-}
-
-cout << "Result: [ ";
-for(double val : B2) cout << val << " ";
-cout << "]" << endl;
-
-    cout << "Matrix B:" << endl;
-    B.displayVector();
-
-   // Solve (This should trigger "Computing LU..." again)
-    Matrix<double> x3 = B.EqnSolver(B2);
-
-    vector<double> X3;
-for (int i = 0; i < x3.Rows(); i++) {
-    // Assuming the result is a column vector (n x 1), take column 0
-    X3.push_back(x3(i, 0));
-}
-
-
-    cout << "Solution x3: [ ";
-    for(double val : X3) cout << val << " ";
-    cout << "]" << endl;
+// Different matrix B
 
 
 
 
-	int m = 3;
-int n = 3;
+
+
+vector<double> b3 = {5, 11};
+
+cout << "\nSolve B x = b3 (different matrix)\n";
+Matrix<double> x3 = B.EqnSolver(b3);
+x3.displayVector();
+
+	
+	int m = 2;
+int n = 2;
 
 vector<vector<double>> P(m, vector<double>(n));
     vector<double> Q(m);
@@ -150,3 +109,4 @@ vector<vector<double>> P(m, vector<double>(n));
         return 0;
 
 }
+
