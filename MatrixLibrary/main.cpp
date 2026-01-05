@@ -44,7 +44,7 @@ int main() {
 	Matrix<double> Inv =  m1.EqnSolver(b);
         Inv.displayVector();
 
-cout << "\n===== LRU CACHE TEST =====\n";
+cout << "\n LRU CACHE TEST \n";
 
 vector<vector<double>> Adata = {
     {4, 3},
