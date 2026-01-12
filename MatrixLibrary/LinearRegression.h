@@ -13,6 +13,8 @@ private:
     std::vector<std::vector<double>> X; 
     std::vector<double> Y;              
     std::vector<double> W;              
+	
+    double b = 0.0;
 
 public:
     LinearRegression(double lr = 0.01, int iters = 1000);
@@ -23,6 +25,7 @@ public:
     std::vector<double> predict(const std::vector<std::vector<double>>& Xtest);
 
     std::vector<double> getWeights() const;
+    double getBias() const;
 };
 
 #endif

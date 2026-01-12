@@ -69,7 +69,7 @@ vector<double> bB = {5, 11};
 
 Matrix<double> xB = B.EqnSolver(bB);  // MISS
 
-// Different matrix B
+
 
 
 
@@ -82,9 +82,14 @@ cout << "\nSolve B x = b3 (different matrix)\n";
 Matrix<double> x3 = B.EqnSolver(b3);
 x3.displayVector();
 
-	
-	int m = 2;
-int n = 2;
+int m = 0;
+int n = 0;
+
+cout << "Enter the number of rows: " << endl;
+cin >> m;
+
+cout << "Enter the number of columns: " << endl;
+cin >> n;
 
 vector<vector<double>> P(m, vector<double>(n));
     vector<double> Q(m);
@@ -98,6 +103,7 @@ vector<vector<double>> P(m, vector<double>(n));
     for(int i = 0; i < m; i++)
         cin >> Q[i];
 
+
     LinearRegression lr(0.01, 5000);
     lr.fit(P, Q);
 
@@ -107,6 +113,11 @@ vector<vector<double>> P(m, vector<double>(n));
     for(double w : weights)
         cout << w << " ";
     cout << endl;
+
+    cout << "\nFinal Bias: " << endl;
+    double bias = lr.getBias();
+    cout << bias;
+
         return 0;
 
 }
